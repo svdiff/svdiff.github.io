@@ -1,0 +1,6 @@
+@article{han2023svdiff,
+  title={SVDiff: Compact Parameter Space for Diffusion Fine-Tuning},
+  author={Han, Ligong and Li, Yinxiao and Zhang, Han and Milanfar, Peyman and Metaxas, Dimitris and Yang, Feng},
+  journal={arXiv preprint arXiv:2303.11305},
+  year={2023}
+}

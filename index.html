@@ -1,0 +1,117 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>SVDiff</title>
+<link href="style.css" rel="stylesheet">
+<script type="text/javascript" src="./DreamBooth_files/jquery.mlens-1.0.min.js"></script> 
+<script type="text/javascript" src="./DreamBooth_files/jquery.js"></script>
+</head>
+
+<body>
+<div class="content">
+  <h1><strong>SVDiff: Compact Parameter Space for Diffusion Fine-tuning</strong></h1>
+  <style>
+    sup {
+      margin-left: -0.3em;
+    }
+  </style>
+  <p id="authors"><a href="https://phymhan.github.io/">Ligong Han</a><sup>1,2</sup> &nbsp;<a href="https://research.google/people/YinxiaoLi/">Yinxiao Li</a><sup>2</sup> &nbsp;<a href="https://sites.google.com/view/hanzhang">Han Zhang</a><sup>2</sup> &nbsp;<a href="https://sites.google.com/view/milanfarhome/">Peyman Milanfar</a><sup>2</sup> &nbsp;<a href="https://people.cs.rutgers.edu/~dnm/">Dimitris Metaxas</a><sup>1</sup> &nbsp;<a href="https://sites.google.com/view/feng-yang">Feng Yang</a><sup>2</sup>
+    <br>
+    <br>
+  <span style="font-size: 23px"><sup>1</sup>Rutgers University</span> &nbsp &nbsp <span style="font-size: 24px"><sup>2</sup>Google Research</span>
+  </p>
+  <br>
+  <img src="./images/teaser_large.png" class="teaser-gif" style="width:100%;"><br>
+  <!-- <h3 style="text-align:center"><em>It’s like a photo booth, but once the subject is captured, it can be synthesized wherever your dreams take you…</em></h3> -->
+    <font size="+2">
+          <p style="text-align: center;">
+            <a href="https://arxiv.org/abs/2303.11305" target="_blank">[Paper]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+	          <a href="https://github.com/phymhan/SVDiff" target="_blank">[Code (coming soon)]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="data/svdiff_bib.txt" target="_blank">[BibTeX]</a>
+          </p>
+    </font>
+</div>
+<div class="content">
+  <h2 style="text-align:center;">Abstract</h2>
+  <p>Diffusion models have achieved remarkable success in text-to-image generation, enabling the creation of high-quality images from text prompts or other modalities. However, existing methods for customizing these models are limited by handling multiple personalized subjects and the risk of overfitting. Moreover, their large number of parameters is inefficient for model storage. In this paper, we propose a novel approach to address these limitations in existing text-to-image diffusion models for personalization. Our method involves fine-tuning the singular values of the weight matrices, leading to a compact and efficient parameter space that reduces the risk of overfitting and language-drifting. We also propose a Cut-Mix-Unmix data-augmentation technique to enhance the quality of multi-subject image generation and a simple text-based image editing framework. Our proposed SVDiff method has a significantly smaller model size (1.7MB for StableDiffusion) compared to existing methods (vanilla DreamBooth 3.66GB, Custom Diffusion 73MB), making it more practical for real-world applications.</p>
+</div>
+
+<!-- Approach -->
+<div class="content">
+  <h2>Approach</h2>
+  <p> <strong>Spectral Shifts</strong>
+    Our method's core idea is to apply the concept of <em>spectral shifts</em> from <a href="https://arxiv.org/abs/2010.11943">FSGAN</a> to the parameter space of diffusion models. We first perform Singular Value Decomposition (SVD) on the weight matrices of the pre-trained diffusion model. The weight matrix is denoted as W, and its SVD is W=UΣV <sup>T</sup>. The SVD is a one-time computation and can be cached. This procedure is inspired by viewing convolution kernels as <a href="http://arxiv.org/abs/2007.15646">linear associative memories</a>.</p>
+  <br>
+  <img class="summary-img" src="images/approach_svd.png" style="width:70%;"> <br>
+  <p>Our CoSINE pipeline enables <b>Single-Image Editing</b> with a text-to-image diffusion model. It fine-tunes the model using a single image-prompt pair and allows desired edits at inference by modifying the prompt. <a href="http://arxiv.org/abs/2010.02502">DDIM inversion</a> is employed for improvements when no significant structural changes are needed.</p>
+  <img class="summary-img" src="images/approach_cosine.png" style="width:100%;"> <br>
+  <br>
+  <p>Our Cut-Mix-Unmix data-augmentation method enables <b>Multi-Subject Generation</b>. We manually create image-prompt pairs using CutMix-like data augmentation and train the model to separate different concepts by presenting explicit mixed samples. To enforce separation, we apply MSE on non-corresponding regions of cross-attention maps, ensuring each subject's token doesn't attend to another subject. At inference, we modify the prompt to generate a new composition.</p>
+  <img class="summary-img" src="images/approach_cmu.png" style="width:100%;"> <br>
+</div>
+
+<!-- Results: SINE -->
+<div class="content">
+  <h2>Single-Image Editing</h2>
+  <p>Our <b>single image editing</b> results show that our method allows successful image edits, even with slight misalignments. It performs well in tasks such as object removal, pose adjustment, and zooming when compared to full model fine-tuning. While backgrounds may be affected, the main subject remains well-preserved. We utilize DDIM inversion for most edits.</p>
+<img class="summary-img" src="images/result_cosine.png" style="width:100%;">
+</div>
+
+<!-- Results: Single -->
+<div class="content">
+  <h2>Single-Subject Generation</h2>
+  <p>Our <b>single subject generation</b> results demonstrate that our method performs comparably to DreamBooth and effectively preserves subject identities in most cases. The text prompts under input images are used for training, while those under sample images are used for inference.</p>
+<img class="summary-img" src="images/result_single.jpeg" style="width:100%;">
+</div>
+
+<!-- Results: Multi -->
+<div class="content">
+  <h2>Multi-Subject Generation</h2>
+  <p><b>Multi-subject generation</b> results show that both full weight and our method benefit from Cut-Mix-Unmix data augmentation. Without it, the model struggles to disentangle subjects of similar categories, as demonstrated in some cases. Fine-tuning on two subjects is shown in (a-d) and on three subjects in (e-g).</p>
+<img class="summary-img" src="images/result_multi.jpeg" style="width:100%;">
+</div>
+
+<!-- Results: Combine -->
+<div class="content">
+  <h2>Combining Spectral Shifts</h2>
+  <p><b>Combining spectral shifts and weight deltas</b> in one model retains individual subject features, but may mix styles for similar subjects. The results also suggest that task arithmetic property of language models holds in StableDiffusion.</p>
+<img class="summary-img" src="images/analysis_sum.jpeg" style="width:100%;">
+</div>
+
+<!-- Results: Style-mix -->
+<div class="content">
+  <h2>Style Transfer and Mixing</h2>
+  <p><b>Personalized style transfer and mixing</b> results showcase different approaches: changing coarse class word in (d) and (i), appending "in style of" in (e) and (j), and using combined spectral shifts in (a, b, f, g).</p>
+<img class="summary-img" src="images/analysis_style.jpeg" style="width:70%;">
+</div>
+
+<!-- Results: scale -->
+<div class="content">
+  <h2>Scaling of Spectral Shifts</h2>
+  <p><b>Effects of scaling spectral shifts and weight deltas:</b> Scaling both spectral shift and weight delta changes attribute strength. Too large a scale may cause deviation from the text prompt and visual artifacts.</p>
+<img class="summary-img" src="images/analysis_scale.jpeg" style="width:100%;">
+</div>
+
+<!-- Results: rank -->
+<div class="content">
+  <h2>Limiting the Rank of Spectral Shifts</h2>
+  <p><b>Effect of limiting rank of spectral shifts:</b> Lower rank leads to limited ability to capture details in edited samples. The model can still reconstruct the subject with rank 1 but may struggle with edited prompts when the rank is low. Performance is better for subjects easier for the model to adapt to, such as Teddybear.</p>
+<img class="summary-img" src="images/analysis_rank.jpeg" style="width:100%;">
+</div>
+
+<div class="content">
+  <h2>BibTex</h2>
+  <code> @article{han2023svdiff,<br>
+  &nbsp;&nbsp;title={SVDiff: Compact Parameter Space for Diffusion Fine-Tuning},<br>
+  &nbsp;&nbsp;author={Han, Ligong and Li, Yinxiao and Zhang, Han and Milanfar, Peyman and Metaxas, Dimitris and Yang, Feng},<br>
+  &nbsp;&nbsp;journal={arXiv preprint arXiv:2303.11305},<br>
+  &nbsp;&nbsp;year={2023}<br>
+  } </code> 
+</div>
+<div class="content" id="acknowledgements">
+  <p><strong>Acknowledgements</strong>:
+    We thank <a href="https://research.google/people/107664/">Huiwen Chang</a>, <a href="https://research.google/people/MauricioDelbracio/">Mauricio Delbracio</a>, and <a href="https://research.google/people/105490/">Hossein Talebi</a> for their valuable inputs that helped improve this work, and to <a href="https://natanielruiz.github.io/">Nataniel Ruiz</a> and <a href="http://people.csail.mit.edu/yzli/">Yuanzhen Li</a> for providing us implementation details of DreamBooth. This work was done by Ligong Han during an internship at Google Research. The website template is borrowed from <a href="https://dreambooth.github.io">DreamBooth</a> project website.
+  </p>
+</div>
+</body>
+</html>
