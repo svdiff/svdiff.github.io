@@ -10,6 +10,7 @@
 <body>
 <div class="content">
   <h1><strong>SVDiff: Compact Parameter Space for Diffusion Fine-tuning</strong></h1>
+  <div style="text-align:center;color:#5a6268;"><h2>ICCV 2023</h2></div>
   <style>
     sup {
       margin-left: -0.3em;
@@ -26,7 +27,7 @@
     <font size="+2">
           <p style="text-align: center;">
             <a href="https://arxiv.org/abs/2303.11305" target="_blank">[Paper]</a> &nbsp;&nbsp;&nbsp;&nbsp;
-	          <a href="https://github.com/phymhan/SVDiff" target="_blank">[Code (coming soon)]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+	          <a href="https://github.com/phymhan/SVDiff" target="_blank">[Code]</a> &nbsp;&nbsp;&nbsp;&nbsp;
             <a href="data/svdiff_bib.txt" target="_blank">[BibTeX]</a>
           </p>
     </font>
@@ -81,8 +82,12 @@
 <!-- Results: Style-mix -->
 <div class="content">
   <h2>Style Transfer and Mixing</h2>
-  <p><b>Personalized style transfer and mixing</b> results showcase different approaches: changing coarse class word in (d) and (i), appending "in style of" in (e) and (j), and using combined spectral shifts in (a, b, f, g).</p>
-<img class="summary-img" src="images/analysis_style.jpeg" style="width:70%;">
+  <p><b>Style transfer</b> results showcase different approaches: changing coarse class word in (d) and (i), appending "in style of" in (e) and (j), and using combined spectral shifts in (a, b, f, g).</p>
+  <br>
+  <img class="summary-img" src="images/analysis_style.jpeg" style="width:80%;"><br>
+  <p>Inspired by <a href="https://arxiv.org/abs/2303.09522">XTI</a>, we use spectral shifts from (16, down, 1) - (8, down, 0) layers in UNet to provide geometry information and conduct <b>Style mixing</b> experiments.</p>
+  <br>
+  <img class="summary-img" src="images/style-mix.jpeg" style="width:95%;"> <br>
 </div>
 
 <!-- Results: scale -->
@@ -110,7 +115,7 @@
 </div>
 <div class="content" id="acknowledgements">
   <p><strong>Acknowledgements</strong>:
-    We thank <a href="https://research.google/people/107664/">Huiwen Chang</a>, <a href="https://research.google/people/MauricioDelbracio/">Mauricio Delbracio</a>, and <a href="https://research.google/people/105490/">Hossein Talebi</a> for their valuable inputs that helped improve this work, and to <a href="https://natanielruiz.github.io/">Nataniel Ruiz</a> and <a href="http://people.csail.mit.edu/yzli/">Yuanzhen Li</a> for providing us implementation details of <a href="https://arxiv.org/abs/2208.12242">DreamBooth</a>. This work was done by Ligong Han during an internship at Google Research. The website template is borrowed from <a href="https://dreambooth.github.io">DreamBooth</a> project website.
+    We thank <a href="https://www.linkedin.com/in/huiwen-chang-999962156/">Huiwen Chang</a>, <a href="https://research.google/people/MauricioDelbracio/">Mauricio Delbracio</a>, and <a href="https://research.google/people/105490/">Hossein Talebi</a> for their valuable inputs that helped improve this work, and to <a href="https://natanielruiz.github.io/">Nataniel Ruiz</a> and <a href="http://people.csail.mit.edu/yzli/">Yuanzhen Li</a> for providing us implementation details of <a href="https://arxiv.org/abs/2208.12242">DreamBooth</a>. This work was done by Ligong Han during an internship at Google Research. The website template is borrowed from <a href="https://dreambooth.github.io">DreamBooth</a> project website.
   </p>
 </div>
 </body>
